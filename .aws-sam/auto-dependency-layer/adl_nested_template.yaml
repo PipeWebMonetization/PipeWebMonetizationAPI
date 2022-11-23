@@ -1,0 +1,64 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: AWS SAM CLI Nested Stack for Auto Dependency Layer Creation
+Metadata:
+  SamCliInfo: 1.60.0
+  key: AWS SAM CLI sync command
+Outputs:
+  getAllItemsFunction2826f580DepLayer:
+    Value:
+      Ref: getAllItemsFunction2826f580DepLayer
+  getAllTransactionsFunction4e5dd252DepLayer:
+    Value:
+      Ref: getAllTransactionsFunction4e5dd252DepLayer
+  getByIdFunctiond60a502bDepLayer:
+    Value:
+      Ref: getByIdFunctiond60a502bDepLayer
+  putItemFunction07f8fe9cDepLayer:
+    Value:
+      Ref: putItemFunction07f8fe9cDepLayer
+Resources:
+  getAllItemsFunction2826f580DepLayer:
+    Metadata:
+      CreatedBy: AWS SAM CLI sync command
+    Properties:
+      CompatibleRuntimes:
+      - nodejs16.x
+      ContentUri: C:\Users\gabri\Development\PipeWebMonetization\pipeWebMonetizationAPI\.aws-sam\auto-dependency-layer\getAllItemsFunction2826f580DepLayer
+      Description: Auto created layer for dependencies of function getAllItemsFunction
+      LayerName: pipeWebMonetizatc840e894-getAllItemsFunction2826f580-DepLayer
+      RetentionPolicy: Delete
+    Type: AWS::Serverless::LayerVersion
+  getAllTransactionsFunction4e5dd252DepLayer:
+    Metadata:
+      CreatedBy: AWS SAM CLI sync command
+    Properties:
+      CompatibleRuntimes:
+      - nodejs16.x
+      ContentUri: C:\Users\gabri\Development\PipeWebMonetization\pipeWebMonetizationAPI\.aws-sam\auto-dependency-layer\getAllTransactionsFunction4e5dd252DepLayer
+      Description: Auto created layer for dependencies of function getAllTransactionsFunction
+      LayerName: pipeWebMonetizatc840e894-getAllTransactionsFunc4e5dd252-DepLayer
+      RetentionPolicy: Delete
+    Type: AWS::Serverless::LayerVersion
+  getByIdFunctiond60a502bDepLayer:
+    Metadata:
+      CreatedBy: AWS SAM CLI sync command
+    Properties:
+      CompatibleRuntimes:
+      - nodejs16.x
+      ContentUri: C:\Users\gabri\Development\PipeWebMonetization\pipeWebMonetizationAPI\.aws-sam\auto-dependency-layer\getByIdFunctiond60a502bDepLayer
+      Description: Auto created layer for dependencies of function getByIdFunction
+      LayerName: pipeWebMonetizatc840e894-getByIdFunctiond60a502b-DepLayer
+      RetentionPolicy: Delete
+    Type: AWS::Serverless::LayerVersion
+  putItemFunction07f8fe9cDepLayer:
+    Metadata:
+      CreatedBy: AWS SAM CLI sync command
+    Properties:
+      CompatibleRuntimes:
+      - nodejs16.x
+      ContentUri: C:\Users\gabri\Development\PipeWebMonetization\pipeWebMonetizationAPI\.aws-sam\auto-dependency-layer\putItemFunction07f8fe9cDepLayer
+      Description: Auto created layer for dependencies of function putItemFunction
+      LayerName: pipeWebMonetizatc840e894-putItemFunction07f8fe9c-DepLayer
+      RetentionPolicy: Delete
+    Type: AWS::Serverless::LayerVersion
+Transform: AWS::Serverless-2016-10-31

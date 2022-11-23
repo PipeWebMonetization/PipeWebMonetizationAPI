@@ -1,0 +1,158 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: pipeWebMonetizationAPI
+Transform: AWS::Serverless-2016-10-31
+Globals:
+  Api:
+    Cors:
+      AllowMethods: '''GET,POST,PUT,DELETE,OPTIONS'''
+      AllowHeaders: '''content-type'''
+      AllowOrigin: '''*'''
+  Function:
+    Environment:
+      Variables:
+        TRANSACTIONS_PER_DAY_OF_WEEK_TABLE:
+          Ref: transactionsPerDayOfWeek
+        TRANSACTIONS_PER_DAY_OF_YEAR_TABLE:
+          Ref: transactionsPerDayOfYear
+        TRANSACTIONS_PER_MONTH_TABLE:
+          Ref: transactionsPerMonth
+        TRANSACTIONS_TABLE:
+          Ref: transactions
+Resources:
+  getAllTransactionsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/get-all-transactions.getAllTransactionsHandler
+      Runtime: nodejs16.x
+      Architectures:
+      - x86_64
+      MemorySize: 128
+      Timeout: 100
+      Description: Lambda function to read all transactions from the database
+      Policies:
+      - DynamoDBCrudPolicy:
+          TableName:
+            Ref: transactions
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /transactions
+            Method: GET
+      CodeUri: getAllTransactionsFunction
+    Metadata:
+      SamResourceId: getAllTransactionsFunction
+  putTransactionsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/put-transactions.putTransactionsHandler
+      Runtime: nodejs16.x
+      Architectures:
+      - x86_64
+      MemorySize: 128
+      Timeout: 100
+      Description: Lambda function to write transactions to the database
+      Policies:
+      - DynamoDBCrudPolicy:
+          TableName:
+            Ref: transactionsPerDayOfWeek
+      - DynamoDBCrudPolicy:
+          TableName:
+            Ref: transactionsPerDayOfYear
+      - DynamoDBCrudPolicy:
+          TableName:
+            Ref: transactionsPerMonth
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /transactions
+            Method: POST
+      CodeUri: putTransactionsFunction
+    Metadata:
+      SamResourceId: putTransactionsFunction
+  pluginIds:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+      - AttributeName: userEmail
+        AttributeType: S
+      - AttributeName: pluginId
+        AttributeType: S
+      KeySchema:
+      - AttributeName: userEmail
+        KeyType: HASH
+      - AttributeName: pluginId
+        KeyType: RANGE
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+  transactions:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+      - AttributeName: pluginId
+        AttributeType: S
+      - AttributeName: date
+        AttributeType: N
+      KeySchema:
+      - AttributeName: pluginId
+        KeyType: HASH
+      - AttributeName: date
+        KeyType: RANGE
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+  transactionsPerDayOfWeek:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+      - AttributeName: pluginId
+        AttributeType: S
+      - AttributeName: paymentPointer
+        AttributeType: S
+      KeySchema:
+      - AttributeName: pluginId
+        KeyType: HASH
+      - AttributeName: paymentPointer
+        KeyType: RANGE
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+  transactionsPerDayOfYear:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+      - AttributeName: pluginId
+        AttributeType: S
+      - AttributeName: paymentPointer
+        AttributeType: S
+      KeySchema:
+      - AttributeName: pluginId
+        KeyType: HASH
+      - AttributeName: paymentPointer
+        KeyType: RANGE
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+  transactionsPerMonth:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+      - AttributeName: pluginId
+        AttributeType: S
+      - AttributeName: paymentPointer
+        AttributeType: S
+      KeySchema:
+      - AttributeName: pluginId
+        KeyType: HASH
+      - AttributeName: paymentPointer
+        KeyType: RANGE
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+Outputs:
+  WebEndpoint:
+    Description: API Gateway endpoint URL for Prod stage
+    Value:
+      Fn::Sub: https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/
