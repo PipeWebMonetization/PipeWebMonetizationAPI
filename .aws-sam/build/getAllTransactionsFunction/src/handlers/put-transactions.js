@@ -14,16 +14,18 @@ exports.putTransactionsHandler = async (event) => {
   };
   let transactionsBatches = [];
   const batchSize = 25;
+  const { transactions, pluginId, paymentPointer, date, totalValue } =
+    JSON.parse(event.body);
 
   try {
     /* Split transactions into batches of batchSize */
-    for (let i = 0; i < event.transactions.length; i += batchSize) {
-      const batch = event.transactions.slice(i, i + batchSize);
+    for (let i = 0; i < transactions.length; i += batchSize) {
+      const batch = transactions.slice(i, i + batchSize);
       transactionsBatches.push(batch);
     }
     await Promise.all(
       transactionsBatches.map(async (batch) => {
-        await writeTransactions(event.pluginId, event.paymentPointer, batch);
+        await writeTransactions(pluginId, paymentPointer, batch);
       })
     );
   } catch (error) {
@@ -34,10 +36,10 @@ exports.putTransactionsHandler = async (event) => {
 
   try {
     await updateTransactionsPerMonth(
-      event.pluginId,
-      event.paymentPointer,
-      event.date,
-      event.totalValue
+      pluginId,
+      paymentPointer,
+      date,
+      totalValue
     );
   } catch (error) {
     res.statusCode = 500;
@@ -47,10 +49,10 @@ exports.putTransactionsHandler = async (event) => {
 
   try {
     await updateTransactionsPerDayOfWeek(
-      event.pluginId,
-      event.paymentPointer,
-      event.date,
-      event.totalValue
+      pluginId,
+      paymentPointer,
+      date,
+      totalValue
     );
   } catch (error) {
     res.statusCode = 500;
@@ -60,10 +62,10 @@ exports.putTransactionsHandler = async (event) => {
 
   try {
     await updateTransactionsPerDayOfYear(
-      event.pluginId,
-      event.paymentPointer,
-      event.date,
-      event.totalValue
+      pluginId,
+      paymentPointer,
+      date,
+      totalValue
     );
   } catch (error) {
     res.statusCode = 500;
@@ -71,6 +73,7 @@ exports.putTransactionsHandler = async (event) => {
     res.body.errors.push(JSON.stringify(error));
   }
 
+  res.body = JSON.stringify(res.body);
   return res;
 };
 

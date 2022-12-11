@@ -2,9 +2,18 @@ const dynamodb = require("aws-sdk/clients/dynamodb");
 const docClient = new dynamodb.DocumentClient({ region: "sa-east-1" });
 
 exports.getAllTransactionsHandler = async (event) => {
-  const { pluginId, type } = event;
+  if (event.httpMethod !== "GET") {
+    return {
+      statusCode: 405,
+      body: `${event.httpMethod} method Not Allowed`,
+    };
+  }
+
+  const { pluginId, type } = event.queryStringParameters;
+
   let res = {
     statusCode: 200,
+    isBase64Encoded: false,
     body: { message: "OK" },
   };
 
@@ -88,5 +97,6 @@ exports.getAllTransactionsHandler = async (event) => {
       break;
   }
 
+  res.body = JSON.stringify(res.body);
   return res;
 };
