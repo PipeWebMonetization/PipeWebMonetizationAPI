@@ -1,0 +1,41 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: >-
+  pipeWebMonetizationAPI
+
+Transform: "AWS::Serverless-2016-10-31"
+
+Globals:
+  Api:
+    Cors:
+      AllowMethods: "'GET,POST,PUT,DELETE,OPTIONS'"
+      AllowHeaders: "'content-type'"
+      AllowOrigin: "'*'"
+  Function:
+    Environment:
+      Variables:
+        PRIVATE_KEY_PATH: !Ref private.key
+        KEY_ID: !Ref e2668d07-32bb-4adc-93ac-2c66740400cc
+        WALLET_ADDRESS: !Ref https://ilp.rafiki.money/pipe-pp-dollar
+
+Resources:
+  authenticateOpenPayments:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/authenticate-open-payments.authenticateOpenPayments
+      Runtime: nodejs16.x
+      Architectures:
+        - x86_64
+      MemorySize: 128
+      Timeout: 100
+      Description: Lambda function to authenticate open payments
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /openpayments/validate-payment
+            Method: POST
+            
+Outputs:
+  WebEndpoint:
+    Description: "API Gateway endpoint URL for Prod stage"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
